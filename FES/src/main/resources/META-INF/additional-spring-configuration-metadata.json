@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "fes.auc.url",
+    "type": "java.lang.String",
+    "description": "This is the authentication server ip and port. i.e http://192.168.58.100:8090/AUC"
+  },
+    {
+    "name": "fes.fes.ip",
+    "type": "java.lang.String",
+    "description": "This is the the ip of the FES"
+  },
+  {
+    "name": "fes.nfd.ip",
+    "type": "java.lang.String",
+    "description": "This is the nfd server ip. i.e 127.0.0.1"
+  },
+  {
+    "name": "server-http.port",
+    "type": "java.lang.String",
+    "description": "A description for 'server-http.port'"
+  },
+  {
+    "name": "ndn.chunkfetcher.library.path",
+    "type": "java.lang.String",
+    "description": "The path of ndnchunkfetcher library"
+  }
+]}
