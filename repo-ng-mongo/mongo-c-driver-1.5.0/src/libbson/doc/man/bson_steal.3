@@ -1,0 +1,131 @@
+.\" This manpage is Copyright (C) 2016 MongoDB, Inc.
+.\" 
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.3
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\" 
+.TH "BSON_STEAL" "3" "2016\(hy11\(hy10" "libbson"
+.SH NAME
+bson_steal() \- Efficiently transfer the contents of src to dst and destroy src.
+.SH "SYNOPSIS"
+
+.nf
+.nf
+bool
+bson_steal (bson_t *dst,
+            bson_t *src);
+.fi
+.fi
+
+.SH "PARAMETERS"
+
+.TP
+.B
+dst
+An uninitialized
+.B bson_t
+.
+.LP
+.TP
+.B
+src
+A
+.B bson_t
+.
+.LP
+
+.SH "DESCRIPTION"
+
+Efficiently transfer the contents of
+.B src
+to
+.B dst
+and destroy
+.B src
+.
+
+Before calling this function,
+.B src
+must be initialized and
+.B dst
+must be uninitialized. After this function returns successfully,
+.B src
+is destroyed, and
+.B dst
+is initialized and must be freed with
+.B bson_destroy
+.
+
+For example, if you have a higher\(hylevel structure that wraps a
+.B bson_t
+, use
+.B bson_steal
+to transfer BSON data into it:
+
+.nf
+typedef struct {
+   bson_t bson;
+} bson_wrapper_t;
+
+
+bson_wrapper_t *
+wrap_bson (bson_t *b)
+{
+   bson_wrapper_t *wrapper = bson_malloc (sizeof (bson_wrapper_t));
+
+   if (bson_steal (&wrapper\(hy>bson, b)) {
+      return wrapper;
+   }
+
+   bson_free (wrapper);
+   return NULL;
+}
+
+
+void
+bson_wrapper_destroy (bson_wrapper_t *wrapper)
+{
+   bson_destroy (&wrapper\(hy>bson);
+   bson_free (wrapper);
+}
+
+
+int
+main (int   argc,
+      char *argv[])
+{
+   bson_t bson = BSON_INITIALIZER;
+   bson_wrapper_t *wrapper;
+
+   BSON_APPEND_UTF8 (&bson, "key", "value");
+
+   /* now "bson" is destroyed */
+   wrapper = wrap_bson (&bson);
+
+   /* clean up */
+   bson_wrapper_destroy (wrapper);
+}
+.fi
+
+See also
+.B bson_destroy_with_steal
+, a lower\(hylevel function that returns the raw contents of a
+.B bson_t
+.
+
+.SH "RETURNS"
+
+Returns true if
+.B src
+is valid and successfully moved to
+.B dst
+, false otherwise.
+
+
+.B
+.SH COLOPHON
+This page is part of libbson.
+Please report any bugs at https://jira.mongodb.org/browse/CDRIVER.

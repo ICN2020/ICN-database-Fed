@@ -1,0 +1,93 @@
+.\" This manpage is Copyright (C) 2016 MongoDB, Inc.
+.\" 
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.3
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\" 
+.TH "MONGOC_DATABASE_COMMAND_SIMPLE" "3" "2016\(hy11\(hy07" "MongoDB C Driver"
+.SH NAME
+mongoc_database_command_simple() \- This is a simplified interface to mongoc_database_command() that returns the first result document. The database's read preference, read concern, and write concern are not applied to the command.  The parameter reply is initialized even upon failure to simplify memory management.
+.SH "SYNOPSIS"
+
+.nf
+.nf
+bool
+mongoc_database_command_simple (mongoc_database_t         *database,
+                                const bson_t              *command,
+                                const mongoc_read_prefs_t *read_prefs,
+                                bson_t                    *reply,
+                                bson_error_t              *error);
+.fi
+.fi
+
+.SH "PARAMETERS"
+
+.TP
+.B
+database
+A
+.B mongoc_database_t
+.
+.LP
+.TP
+.B
+command
+A
+.B bson_t
+containing the command.
+.LP
+.TP
+.B
+read_prefs
+An optional
+.B mongoc_read_prefs_t
+. Otherwise, the command uses mode
+.B MONGOC_READ_PRIMARY
+.
+.LP
+.TP
+.B
+reply
+A location to store the commands first result document.
+.LP
+.TP
+.B
+error
+An optional location for a
+.B bson_error_t
+or
+.B NULL
+.
+.LP
+
+This is a simplified interface to
+.B mongoc_database_command(3)
+that returns the first result document. The database's read preference, read concern, and write concern are not applied to the command. The parameter
+.B reply
+is initialized even upon failure to simplify memory management.
+
+.SH "ERRORS"
+
+Errors are propagated through the
+.B error
+parameter.
+
+.SH "RETURNS"
+
+.B true
+on success,
+.B false
+on failure and
+.B error
+is set.
+
+This function does not check the server response for a write concern error or write concern timeout.
+
+
+.B
+.SH COLOPHON
+This page is part of MongoDB C Driver.
+Please report any bugs at https://jira.mongodb.org/browse/CDRIVER.

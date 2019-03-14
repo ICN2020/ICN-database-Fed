@@ -1,0 +1,63 @@
+.\" This manpage is Copyright (C) 2016 MongoDB, Inc.
+.\" 
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.3
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\" 
+.TH "BSON_DECIMAL128_T" "3" "2016\(hy11\(hy10" "libbson"
+.SH NAME
+bson_decimal128_t \- BSON Decimal128 Abstraction
+.SH "SYNOPSIS"
+
+.nf
+.nf
+#include <bson.h>
+
+typedef struct
+{
+#if BSON_BYTE_ORDER == BSON_LITTLE_ENDIAN
+   uint64_t low;
+   uint64_t high;
+#elif BSON_BYTE_ORDER == BSON_BIG_ENDIAN
+   uint64_t high;
+   uint64_t low;
+#endif
+} bson_decimal128_t;
+.fi
+.fi
+
+.SH "DESCRIPTION"
+
+The
+.B bson_decimal128_t
+structure represents the IEEE\(hy754 Decimal128 data type.
+
+.SH "EXAMPLE"
+
+.nf
+.nf
+#include <bson.h>
+#include <stdio.h>
+
+int main (int argc, char *argv[])
+{
+   char string[BSON_DECIMAL128_STRING];
+   bson_decimal128_t decimal128;
+
+   bson_decimal128_from_string ("100.00", &decimal128);
+   bson_decimal128_to_string (&decimal128, string);
+   printf ("Decimal128 value: %s\en", string);
+
+   return 0;
+}
+.fi
+.fi
+
+
+.B
+.SH COLOPHON
+This page is part of libbson.
+Please report any bugs at https://jira.mongodb.org/browse/CDRIVER.

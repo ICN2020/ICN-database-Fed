@@ -1,0 +1,137 @@
+.\" This manpage is Copyright (C) 2016 MongoDB, Inc.
+.\" 
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.3
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\" 
+.TH "BASIC_TROUBLESHOOTING" "3" "2016\(hy10\(hy20" "MongoDB C Driver"
+.SH NAME
+Basic_Troubleshooting \- None
+.SH "TROUBLESHOOTING CHECKLIST"
+
+The following is a short list of things to check when you have a problem.
+
+.IP \[bu] 2
+Did you call
+.B mongoc_init(3)
+in
+.B main(3)
+? If not, you will likely see a segfault.
+.IP \[bu] 2
+Have you leaked any clients or cursors as can be found with
+.B mongoc-stat 
+?
+.IP \[bu] 2
+Have packets been delivered to the server? See egress bytes from
+.B mongoc-stat 
+.
+.IP \[bu] 2
+Does
+.B valgrind
+show any leaks? Ensure you call
+.B mongoc_cleanup(3)
+at the end of your process to cleanup lingering allocations from the MongoDB C driver.
+.IP \[bu] 2
+If compiling your own copy of MongoDB C driver, consider configuring with
+.B --enable-tracing
+to enable function tracing and hex dumps of network packets to
+.B STDERR
+and
+.B STDOUT
+.
+
+.SH "PERFORMANCE COUNTERS"
+
+
+The MongoDB C driver comes with a unique feature to help developers and sysadmins troubleshoot problems in production. Performance counters are available for each process using the driver. The counters can be accessed outside of the application process via a shared memory segment. This means that you can graph statistics about your application process easily from tools like Munin or Nagios. Your author often uses
+.B watch --interval=0.5 -d mongoc-stat $PID
+to monitor an application.
+
+.B NOTE
+.RS
+Counters are currently available on UNIX\(hylike platforms that support shared memory segments.
+.RE
+
+.IP \[bu] 2
+Active and Disposed Cursors
+.IP \[bu] 2
+Active and Disposed Clients, Client Pools, and Socket Streams.
+.IP \[bu] 2
+Number of operations sent and received, by type.
+.IP \[bu] 2
+Bytes transferred and received.
+.IP \[bu] 2
+Authentication successes and failures.
+.IP \[bu] 2
+Number of wire protocol errors.
+
+To access counters for a given process, simply provide the process id to the
+.B mongoc-stat
+program installed with the MongoDB C Driver.
+
+.B $ 
+.B mongoc-stat 22203
+.nf
+Operations : Egress Total        : The number of sent operations.                    : 13247
+   Operations : Ingress Total       : The number of received operations.                : 13246
+   Operations : Egress Queries      : The number of sent Query operations.              : 13247
+   Operations : Ingress Queries     : The number of received Query operations.          : 0
+   Operations : Egress GetMore      : The number of sent GetMore operations.            : 0
+   Operations : Ingress GetMore     : The number of received GetMore operations.        : 0
+   Operations : Egress Insert       : The number of sent Insert operations.             : 0
+   Operations : Ingress Insert      : The number of received Insert operations.         : 0
+   Operations : Egress Delete       : The number of sent Delete operations.             : 0
+   Operations : Ingress Delete      : The number of received Delete operations.         : 0
+   Operations : Egress Update       : The number of sent Update operations.             : 0
+   Operations : Ingress Update      : The number of received Update operations.         : 0
+   Operations : Egress KillCursors  : The number of sent KillCursors operations.        : 0
+   Operations : Ingress KillCursors : The number of received KillCursors operations.    : 0
+   Operations : Egress Msg          : The number of sent Msg operations.                : 0
+   Operations : Ingress Msg         : The number of received Msg operations.            : 0
+   Operations : Egress Reply        : The number of sent Reply operations.              : 0
+   Operations : Ingress Reply       : The number of received Reply operations.          : 13246
+      Cursors : Active              : The number of active cursors.                     : 1
+      Cursors : Disposed            : The number of disposed cursors.                   : 13246
+      Clients : Active              : The number of active clients.                     : 1
+      Clients : Disposed            : The number of disposed clients.                   : 0
+      Streams : Active              : The number of active streams.                     : 1
+      Streams : Disposed            : The number of disposed streams.                   : 0
+      Streams : Egress Bytes        : The number of bytes sent.                         : 794931
+      Streams : Ingress Bytes       : The number of bytes received.                     : 589694
+      Streams : N Socket Timeouts   : The number of socket timeouts.                    : 0
+ Client Pools : Active              : The number of active client pools.                : 1
+ Client Pools : Disposed            : The number of disposed client pools.              : 0
+     Protocol : Ingress Errors      : The number of protocol errors on ingress.         : 0
+         Auth : Failures            : The number of failed authentication requests.     : 0
+         Auth : Success             : The number of successful authentication requests. : 0
+.fi
+
+.SH "SUBMITTING A BUG REPORT"
+
+
+Think you've found a bug? Want to see a new feature in the MongoDB C driver? Please open a case in our issue management tool, JIRA:
+
+.IP \[bu] 2
+.B Create an account and login
+.
+.IP \[bu] 2
+Navigate to
+.B the CDRIVER project
+.
+.IP \[bu] 2
+Click
+.B Create Issue
+\(hy Please provide as much information as possible about the issue type and how to reproduce it.
+
+Bug reports in JIRA for all driver projects (i.e. CDRIVER, CSHARP, JAVA) and the Core Server (i.e. SERVER) project are
+.B public
+.
+
+
+.B
+.SH COLOPHON
+This page is part of MongoDB C Driver.
+Please report any bugs at https://jira.mongodb.org/browse/CDRIVER.

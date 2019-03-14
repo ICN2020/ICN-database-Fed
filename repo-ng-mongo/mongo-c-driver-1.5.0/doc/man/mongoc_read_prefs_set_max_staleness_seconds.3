@@ -1,0 +1,48 @@
+.\" This manpage is Copyright (C) 2016 MongoDB, Inc.
+.\" 
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.3
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\" 
+.TH "MONGOC_READ_PREFS_SET_MAX_STALENESS_SECONDS" "3" "2016\(hy11\(hy27" "MongoDB C Driver"
+.SH NAME
+mongoc_read_prefs_set_max_staleness_seconds() \- Sets the maxStalenessSeconds to be used for the read preference. Clients estimate the staleness of each secondary, and select for reads only those secondaries whose estimated staleness is less than or equal to maxStalenessSeconds.
+.SH "SYNOPSIS"
+
+.nf
+.nf
+void
+mongoc_read_prefs_set_max_staleness_seconds (mongoc_read_prefs_t *read_prefs,
+                                             int64_t              max_staleness_seconds);
+.fi
+.fi
+
+.SH "PARAMETERS"
+
+.TP
+.B
+read_prefs
+A
+.B mongoc_read_prefs_t
+.
+.LP
+.TP
+.B
+max_staleness_seconds
+A positive integer or
+.B MONGOC_NO_MAX_STALENESS
+.
+.LP
+
+.SH "DESCRIPTION"
+
+Sets the maxStalenessSeconds to be used for the read preference. Clients estimate the staleness of each secondary, and select for reads only those secondaries whose estimated staleness is less than or equal to maxStalenessSeconds.
+
+
+.B
+.SH COLOPHON
+This page is part of MongoDB C Driver.
+Please report any bugs at https://jira.mongodb.org/browse/CDRIVER.

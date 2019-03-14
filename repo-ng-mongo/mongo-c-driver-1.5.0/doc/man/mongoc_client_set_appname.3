@@ -1,0 +1,71 @@
+.\" This manpage is Copyright (C) 2016 MongoDB, Inc.
+.\" 
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.3
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\" 
+.TH "MONGOC_CLIENT_SET_APPNAME" "3" "2016\(hy11\(hy07" "MongoDB C Driver"
+.SH NAME
+mongoc_client_set_appname() \- None
+.SH "SYNOPSIS"
+
+.nf
+.nf
+bool
+mongoc_client_set_appname (mongoc_client_t *client,
+                           const char      *appname)
+.fi
+.fi
+
+Sets the application name for this client. This string, along with other internal driver details, is sent to the server as part of the initial connection handshake (
+.B "isMaster"
+).
+
+.B appname
+is copied, and doesn't have to remain valid after the call to
+.B mongoc_client_set_appname(3)
+.
+
+This function will log an error and return false in the following cases:
+
+.IP \[bu] 2
+.B appname
+is longer than
+.B MONGOC_HANDSHAKE_APPNAME_MAX
+.IP \[bu] 2
+.B client
+has already initiated a handshake
+.IP \[bu] 2
+.B client
+is from a
+.B mongoc_client_pool_t
+
+.SH "PARAMETERS"
+
+.TP
+.B
+client
+A
+.B mongoc_client_t
+.
+.LP
+.TP
+.B
+appname
+The application name, of length at most
+.B MONGOC_HANDSHAKE_APPNAME_MAX
+.
+.LP
+
+.SH "RETURNS"
+
+true if the appname is set successfully. Otherwise, false.
+
+
+.B
+.SH COLOPHON
+This page is part of MongoDB C Driver.
+Please report any bugs at https://jira.mongodb.org/browse/CDRIVER.

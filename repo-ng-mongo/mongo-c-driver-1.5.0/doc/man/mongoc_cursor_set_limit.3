@@ -1,0 +1,66 @@
+.\" This manpage is Copyright (C) 2016 MongoDB, Inc.
+.\" 
+.\" Permission is granted to copy, distribute and/or modify this document
+.\" under the terms of the GNU Free Documentation License, Version 1.3
+.\" or any later version published by the Free Software Foundation;
+.\" with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+.\" A copy of the license is included in the section entitled "GNU
+.\" Free Documentation License".
+.\" 
+.TH "MONGOC_CURSOR_SET_LIMIT" "3" "2016\(hy10\(hy20" "MongoDB C Driver"
+.SH NAME
+mongoc_cursor_set_limit() \- Limits the number of documents in the result set.
+.SH "SYNOPSIS"
+
+.nf
+.nf
+bool
+mongoc_cursor_set_limit (mongoc_cursor_t *cursor,
+                         int64_t          limit);
+.fi
+.fi
+
+.SH "PARAMETERS"
+
+.TP
+.B
+cursor
+A
+.B mongoc_cursor_t
+.
+.LP
+.TP
+.B
+limit
+The maximum number of documents to retrieve for this query.
+.LP
+
+.SH "DESCRIPTION"
+
+Limits the number of documents in the result set.
+
+This function is useful for setting the limit on a cursor after the cursor is created, but before any calls to
+.B mongoc_cursor_next
+. It can also be used to pass a negative limit: The
+.B limit
+parameter to
+.B mongoc_cursor_set_limit
+is signed, although for backward\(hycompatibility reasons the
+.B limit
+parameter to
+.B mongoc_collection_find
+is not.
+
+Calling this function after
+.B mongoc_cursor_next
+has no effect.
+
+.SH "RETURNS"
+
+True if the limit was set.
+
+
+.B
+.SH COLOPHON
+This page is part of MongoDB C Driver.
+Please report any bugs at https://jira.mongodb.org/browse/CDRIVER.
