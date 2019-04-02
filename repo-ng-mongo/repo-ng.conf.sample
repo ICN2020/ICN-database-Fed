@@ -4,33 +4,31 @@ repo
   ; Only 'prefix' option is allowed here, which can be repeated multiple times
   data
   {
-    prefix "ndn:/example/data/1"
-    prefix "ndn:/example/data/2"
+    prefix "ndn:/repo/repo1"
   }
 
   ; Section defining list of command prefixes (to insert or delete Data) to register.
   ; Only 'prefix' option is allowed here, which can be repeated multiple times
   command
   {
-    prefix "ndn:/example/repo/1"
-    prefix "ndn:/example/repo/2"
+    prefix "ndn:/repo/repo1"
   }
 
   ; Section to specify where data should be stored
   ; Right now only a single 'sqlite' option is allowed:
   storage
   {
-    method "sqlite"             ; Currently, only sqlite storage engine is supported
-    path "/var/db/ndn-repo-ng"  ; path to repo-ng storage folder
-    max-packets 100000
+    method "mongo"             ; Currently, only sqlite storage engine is supported
+    path "~/db/ndn-repo-ng"  ; path to repo-ng storage folder
+    max-packets 10000000
   }
 
   ; Section to enable TCP bulk insert capability
   ; If section is present, then TCP bulk insert is enabled (empty section enables
   ; TCP bulk insert to listen on "localhost:7376")
   tcp_bulk_insert {
-    ; host "localhost"  ; Set to listen on different IP address or hostname
-    ; port 7376  ; Set to listen on different port number
+    host "192.168.68.3"  ; Set to listen on different IP address or hostname
+    port 7376  ; Set to listen on different port number
   }
 
   validator
@@ -95,3 +93,4 @@ repo
     ; }
   }
 }
+
