@@ -1,0 +1,13 @@
+# Emacs temp files
+*~
+
+# macOS stuff
+.DS_*
+
+# Compiled python code
+*.pyc
+*.pyo
+
+# Other
+*.class
+
