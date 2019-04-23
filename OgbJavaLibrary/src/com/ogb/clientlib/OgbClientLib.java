@@ -1,20 +1,15 @@
-package com.bonvoyage.ogb.clientlib;
+package com.ogb.clientlib;
 
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.BasicDBObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.*;
@@ -29,11 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
-import com.ogb.time.*;
 
 /***
  * 
@@ -380,45 +371,8 @@ public class OgbClientLib {
 	 * @param location : [latitude longitude] double array
 	 * @return object identifier
 	 */
+	
 	public String addPoint(String token, String cid, HashMap<String, String> propertiesMap, final double[] location)
-	{
-		return this.addPoint(token, cid, propertiesMap, location, null, null);
-		//		double lat = location[0];
-		//		double lon = location[1];
-		//		boolean first=true;
-		//		String oid = null;
-		//		String json = "{\"geometry\" : {\"type\" : \"Point\", \"coordinates\" : ["+ lon + ", " + lat +"]},\"type\":\"Feature\", \"properties\" : {";
-		//
-		//		for (String key : propertiesMap.keySet()) {
-		//			if (!first)
-		//				json = json+",";
-		//			else
-		//				first=false;
-		//
-		//			json = json +"\""+key+"\" : \""+propertiesMap.get(key)+"\"";
-		//		}
-		//
-		//		json = json+"}}";
-		////		System.out.println("geoJSON to be inserted: "+json);
-		//		if (!isJSONValid(json))
-		//			System.out.println("Not valid GeoJSON");
-		//		else
-		//			oid=insertGeoJSON(token, cid, json);
-		//
-		//		return oid;
-	}
-
-	/***
-	 * 
-	 * @param token : string retrieved by login  
-	 * @param cid : collection identifier
-	 * @param propertiesMap : set of geo-json properties, hashmap <string properties, string property_value>
-	 * @param location : [latitude longitude] double array
-	 * @param startDate  : starting date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @param stopDate   : ending date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @return object identifier
-	 */
-	public String addPoint(String token, String cid, HashMap<String, String> propertiesMap, final double[] location, String startDate, String stopDate)
 	{
 		double lat = location[0];
 		double lon = location[1];
@@ -435,22 +389,7 @@ public class OgbClientLib {
 
 			json = json +"\""+key+"\" : \""+propertiesMap.get(key)+"\"";
 		}
-		if (startDate!=null&&stopDate!=null)
-		{
-			try {
-				DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-				DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
-				Date start = DATE_FORMAT.parse(startDate);
-				Date stop  = DATE_FORMAT.parse(stopDate);
-				json = json+"},\"temporalExtent\":{\"validTime\": {\"type\": \"interval\",\"values\" :["+TimeUtils.dateToMinutes(start)+","+TimeUtils.dateToMinutes(stop)+"]}}}";
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "ERROR: not valid date format";
-			}
-		}
-		else
-			json = json+"}}";
+		json = json+"}}";
 		//		System.out.println("geoJSON to be inserted: "+json);
 		if (!isJSONValid(json))
 			System.out.println("Not valid GeoJSON");
@@ -470,23 +409,8 @@ public class OgbClientLib {
 	 */
 	public String addMultiPoint(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates)
 	{
-		return this.addMultiPoint(token, cid, propertiesMap, coordinates, null, null);
-	}
-
-	/***
-	 * 
-	 * @param token : string retrieved by login  
-	 * @param cid : collection identifier
-	 * @param propertiesMap : set of geo-json properties, hashmap <string properties, string property_value>
-	 * @param location : array list of [latitude longitude] double arrays
-	 * @param startDate  : starting date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @param stopDate   : ending date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @return object identifier
-	 */
-	public String addMultiPoint(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates, String startDate, String stopDate)
-	{
 		//		long startTime=System.currentTimeMillis();
-		String json = makeJSONStringForMultipoint(token, cid, propertiesMap, coordinates, startDate, stopDate);
+		String json = makeJSONStringForMultipoint(token, cid, propertiesMap, coordinates);
 		String oid = null;
 		//		System.out.println("(library) json calculation time:"+(System.currentTimeMillis()-startTime));
 		if (!isJSONValid(json))
@@ -499,7 +423,7 @@ public class OgbClientLib {
 
 	}
 
-	private String makeJSONStringForPolygon(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates, String startDate, String stopDate )
+	private String makeJSONStringForPolygon(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates)
 	{
 		boolean first=true;
 		StringBuilder json = new StringBuilder();
@@ -523,28 +447,11 @@ public class OgbClientLib {
 			json.append("\"").append(key).append("\" : \"").append(propertiesMap.get(key)).append("\"");
 		}
 
-		if (startDate!=null&&stopDate!=null){
-			try{
-				DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-				DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
-				Date start = DATE_FORMAT.parse(startDate);
-				Date stop  = DATE_FORMAT.parse(stopDate);
-
-				json.append("},\"temporalExtent\":{\"validTime\": {\"type\": \"interval\",\"values\" :[").append(TimeUtils.dateToMinutes(start)).append(",").append(TimeUtils.dateToMinutes(stop)).append("]}}}");
-				//		System.out.println("geoJSON to be inserted: "+json);
-
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "ERROR: not valid date format";
-			}
-		}
-		else
-			json.append("}}");
+		json.append("}}");
 		return json.toString();
 	}
 
-	private String makeJSONStringForMultipoint(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates, String startDate, String stopDate)
+	private String makeJSONStringForMultipoint(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates)
 	{
 		StringBuilder json = new StringBuilder();
 
@@ -566,24 +473,7 @@ public class OgbClientLib {
 
 			json.append("\"").append(key).append("\" : \"").append(propertiesMap.get(key)).append("\"");
 		}
-		if (startDate!=null&&stopDate!=null){
-			try{
-				DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-				DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
-				Date start = DATE_FORMAT.parse(startDate);
-				Date stop  = DATE_FORMAT.parse(stopDate);
-
-				json.append("},\"temporalExtent\":{\"validTime\": {\"type\": \"interval\",\"values\" :[").append(TimeUtils.dateToMinutes(start)).append(",").append(TimeUtils.dateToMinutes(stop)).append("]}}}");
-				//		System.out.println("geoJSON to be inserted: "+json);
-
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return "ERROR: not valid date format";
-			}
-		}
-		else
-			json.append("}}");
+		json.append("}}");
 
 		return json.toString();
 	}
@@ -597,26 +487,11 @@ public class OgbClientLib {
 	 * @param location : array list of list of [latitude longitude] double arrays
 	 * @return object identifier
 	 */
-	public String addPolygon(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates )
-	{
-		return this.addPolygon(token, cid, propertiesMap, coordinates, null, null);
-	}
-
-	/***
-	 * 
-	 * @param token : string retrieved by login  
-	 * @param cid : collection identifier
-	 * @param propertiesMap : set of geo-json properties, hashmap <string properties, string property_value>
-	 * @param location : array list of list of [latitude longitude] double arrays
-	 * @param startDate  : starting date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @param stopDate   : ending date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @return object identifier
-	 */
-	public String addPolygon(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates, String startDate, String stopDate )
+	public String addPolygon(String token, String cid, HashMap<String, String> propertiesMap, ArrayList<double[]> coordinates)
 	{
 		String  oid  = null;
 
-		String json = makeJSONStringForPolygon(token, cid, propertiesMap, coordinates, startDate, stopDate);
+		String json = makeJSONStringForPolygon(token, cid, propertiesMap, coordinates);
 
 		if (!isJSONValid(json))
 			System.out.println("Not valid GeoJSON");
@@ -714,220 +589,6 @@ public class OgbClientLib {
 			headers.put("Authorization", token);	
 			headers.put("Content-Type", "application/json");
 			JSONObject result = sendPost(headers, json, url);
-
-			return result.optString("response");
-		}
-		catch(Exception e) {
-			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-		}
-
-		return null;
-	}
-
-
-	/***
-	 * 
-	 * @param token : string retrieved by login  
-	 * @param cid : collection identifier
-	 * @param sw_lat : south west latitude
-	 * @param sw_lon : south west longitude
-	 * @param ne_lat : north east latitude
-	 * @param ne_lon : north east longitude
-	 * @param startDate  : starting date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @param stopDate   : ending date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @return a string representing JSON array of geoJSON objects
-	 */
-	public String rangeQueryBoxTimeWithin(String token, String cid, double sw_lat, double sw_lon, double ne_lat, double ne_lon, String startDate, String stopDate) 
-	{
-		if (sw_lat>ne_lat||sw_lon>ne_lon)
-			return "Not valid box edge coordinates";
-
-		try {
-			List<double[]> box = new ArrayList<double[]>();
-			box.add(new double[] { sw_lon, sw_lat}); //Starting coordinate
-			box.add(new double[] { ne_lon, ne_lat}); // Ending coordinate
-
-			BasicDBObject geometryValue = new BasicDBObject("type","Box");
-			geometryValue.append("coordinates", box);
-			BasicDBObject geometry = new BasicDBObject("$geometry",geometryValue);
-			BasicDBObject spatialQueryType = new BasicDBObject("$geoIntersects",geometry);
-
-			List<String> dates = new ArrayList<String>();
-			dates.add(startDate);
-			dates.add(stopDate);
-			BasicDBObject temporalValue = new BasicDBObject("type","interval");
-			temporalValue.append("values", dates);
-			BasicDBObject timeRangeType = new BasicDBObject("$validTime",temporalValue);
-			BasicDBObject temporalOperator = new BasicDBObject("$timeWithin",timeRangeType);			
-			//BasicDBObject temporalExtent = new BasicDBObject("temporalExtent",temporalOperator);	
-
-			BasicDBObject query = new BasicDBObject("geometry",spatialQueryType);
-			query.append("temporalExtent", temporalOperator);
-
-			//			System.out.println(query);
-
-			String url = FrontEndServerURL+ "/OGB/query-service/"+cid;
-			HashMap<String, String> headers = new HashMap<>();
-			headers.put("Authorization", token);	
-			headers.put("Content-Type", "application/json");
-			JSONObject result = sendPost(headers, query.toString(), url);
-
-			return result.optString("response");
-		}
-		catch(Exception e) {
-			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-		}
-
-		return null;
-	}
-
-	/***
-	 * 
-	 * @param token : string retrieved by login  
-	 * @param cid : collection identifier
-	 * @param sw_lat : south west latitude
-	 * @param sw_lon : south west longitude
-	 * @param ne_lat : north east latitude
-	 * @param ne_lon : north east longitude
-	 * @param startDate  : starting date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @param stopDate   : ending date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @return a string representing JSON array of geoJSON objects
-	 */
-	public String rangeQueryBoxTimeIntersect(String token, String cid, double sw_lat, double sw_lon, double ne_lat, double ne_lon, String startDate, String stopDate) 
-	{
-		if (sw_lat>ne_lat||sw_lon>ne_lon)
-			return "Not valid box edge coordinates";
-
-		try {
-			List<double[]> box = new ArrayList<double[]>();
-			box.add(new double[] { sw_lon, sw_lat}); //Starting coordinate
-			box.add(new double[] { ne_lon, ne_lat}); // Ending coordinate
-
-			BasicDBObject geometryValue = new BasicDBObject("type","Box");
-			geometryValue.append("coordinates", box);
-			BasicDBObject geometry = new BasicDBObject("$geometry",geometryValue);
-			BasicDBObject spatialQueryType = new BasicDBObject("$geoIntersects",geometry);
-
-			List<String> dates = new ArrayList<String>();
-			dates.add(startDate);
-			dates.add(stopDate);
-			BasicDBObject temporalValue = new BasicDBObject("type","interval");
-			temporalValue.append("values", dates);
-			BasicDBObject timeRangeType = new BasicDBObject("$validTime",temporalValue);
-			BasicDBObject temporalOperator = new BasicDBObject("$timeIntersect",timeRangeType);			
-			//BasicDBObject temporalExtent = new BasicDBObject("temporalExtent",temporalOperator);	
-
-			BasicDBObject query = new BasicDBObject("geometry",spatialQueryType);
-			query.append("temporalExtent", temporalOperator);
-
-			//			System.out.println(query);
-
-			String url = FrontEndServerURL+ "/OGB/query-service/"+cid;
-			HashMap<String, String> headers = new HashMap<>();
-			headers.put("Authorization", token);	
-			headers.put("Content-Type", "application/json");
-			JSONObject result = sendPost(headers, query.toString(), url);
-
-			return result.optString("response");
-		}
-		catch(Exception e) {
-			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-		}
-
-		return null;
-	}
-
-
-	/***
-	 * 
-	 * @param token : string retrieved by login  
-	 * @param cid : collection identifier
-	 * @param coordinates : ArrayList of ArrayList<[latitude longitude]> double arrays, at the moment supporting only polygon without holes (for more information see http://geojson.org/geojson-spec.html#id4)
-	 * @param startDate  : starting date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @param stopDate   : ending date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @return a string representing JSON array of geoJSON objects
-	 */
-	public String rangeQueryPolygonTimeWithin(String token, String cid, ArrayList<ArrayList<double[]>> coordinates, String startDate, String stopDate)
-	{
-		try{
-			StringBuilder json = new StringBuilder(); 
-			json.append("{\"geometry\":{\"$geoIntersects\":{\"$geometry\":{\"type\":\"Polygon\", \"coordinates\":[");
-
-			int counter =0;
-
-			for(ArrayList<double[]> coordinateArray : coordinates)		// if Polygon has "holes" we have multiple array<coordinate[lat,lon]>
-			{
-				if (counter>0) json.append(",");
-				json.append("[");
-				for (int i = 0; i < coordinateArray.size(); i++) {
-					double lat=coordinateArray.get(i)[0];
-					double lon=coordinateArray.get(i)[1];
-					if (i>0) json.append(",");
-					json.append("["+ lon + ", " + lat +"]");
-				}
-				json.append("]");
-				counter++;
-			}
-
-			json.append("]}}},\"temporalExtent\":{\"$timeWithin\": {\"$validTime\": {\"type\": \"interval\",\"values\" :[\""+startDate+"\",\""+stopDate+"\"]}}}}");
-
-			//			System.out.println("geoJSON query: "+json);
-
-			String url = FrontEndServerURL+ "/OGB/query-service/"+cid;
-			HashMap<String, String> headers = new HashMap<>();
-			headers.put("Authorization", token);	
-			headers.put("Content-Type", "application/json");
-			JSONObject result = sendPost(headers, json.toString(), url);
-
-			return result.optString("response");
-		}
-		catch(Exception e) {
-			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
-		}
-		return null;
-	}
-
-	/***
-	 * 
-	 * @param token : string retrieved by login  
-	 * @param cid : collection identifier
-	 * @param coordinates : ArrayList of ArrayList<[latitude longitude]> double arrays, at the moment supporting only polygon without holes (for more information see http://geojson.org/geojson-spec.html#id4)
-	 * @param startDate  : starting date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @param stopDate   : ending date in UTC format - yyyy-MM-ddTHH:mm:ssZ
-	 * @return a string representing JSON array of geoJSON objects
-	 */
-	public String rangeQueryPolygonTimeIntersect(String token, String cid, ArrayList<ArrayList<double[]>> coordinates, String startDate, String stopDate)
-	{
-		try{
-			StringBuilder json = new StringBuilder();
-			json.append("{\"geometry\":{\"$geoIntersects\":{\"$geometry\":{\"type\":\"Polygon\", \"coordinates\":[");
-
-
-			int counter =0;
-
-			for(ArrayList<double[]> coordinateArray : coordinates)		// if Polygon has "holes" we have multiple array<coordinate[lat,lon]>
-			{
-				if (counter>0) json.append(",");
-				json.append("[");
-				for (int i = 0; i < coordinateArray.size(); i++) {
-					double lat=coordinateArray.get(i)[0];
-					double lon=coordinateArray.get(i)[1];
-					if (i>0) json.append(",");
-					json.append("["+ lon + ", " + lat +"]");
-				}
-				json.append("]");
-				counter++;
-			}
-
-			json.append("]}}},\"temporalExtent\":{\"$timeIntersect\": {\"$validTime\": {\"type\": \"interval\",\"values\" :[\""+startDate+"\",\""+stopDate+"\"]}}}}");
-
-			//			System.out.println("geoJSON query: "+json);
-
-			String url = FrontEndServerURL+ "/OGB/query-service/"+cid;
-			HashMap<String, String> headers = new HashMap<>();
-			headers.put("Authorization", token);	
-			headers.put("Content-Type", "application/json");
-			JSONObject result = sendPost(headers, json.toString(), url);
 
 			return result.optString("response");
 		}

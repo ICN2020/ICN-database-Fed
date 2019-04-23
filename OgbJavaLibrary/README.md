@@ -4,9 +4,9 @@ This is a java library developed for OpenGeoBase frontend.
 
 ###Installation guide
 
-To use this library in your project, export OgbJavaLibrary/src/com/bonvoyage/ogb/clientlib/OgbClientLib.java as runnable jar file and add it to the build path of your project. Then use 
+To use this library in your project, export OgbJavaLibrary/src/com/icn2020/ogb/clientlib/OgbClientLib.java as runnable jar file and add it to the build path of your project. Then use 
 
-        import com.bonvoyage.ogb.clientlib.*;
+        import com.ogb.clientlib.*;
 
 ## API method description
 
@@ -155,7 +155,7 @@ The following code shows an example of **Polygon** GeoJSON object with additiona
         HashMap<String,String> polygonProp = new HashMap<String,String>();
         polygonProp.put("URL", "http:/myurl.it/gtfz.zip");	
         polygonProp.put("Type", "GTFS");
-        polygonProp.put("Provider", "Bonvoyage Project");
+        polygonProp.put("Provider", "ICN2020 Project");
 
         // db insertion, response is the object identifier (oid)
         String poid = ogbTestClient.addPolygon(token,cid, polygonProp, pcoordinates);
@@ -202,7 +202,7 @@ Following text shows an example of **MultiPoint** GeoJSON object with additional
         },
         "type": "Feature",
         "properties": {
-            "Provider", "Bonvoyage Project",
+            "Provider", "ICN2020 Project",
             "Type", "GTFS",
             "URL" : "http:/myurl.it/gtfs.zip"
         }
@@ -254,7 +254,7 @@ _String_ **queryObject**(String token, String cid, String oid)
     
 The following code shows an example of object query:
 
-        String oid = "/OGB/000/000/21/00/GPS_id/GEOJSON/bonvoyage/testCID/test/q37871900e8w1r69";
+        String oid = "/OGB/000/000/21/00/GPS_id/GEOJSON/icn2020/testCID/test/q37871900e8w1r69";
         System.out.println("\n\n**** Object Query ****");
         String response1 = ogbTestClient.queryObject(token, cid, oid);
         System.out.println("query response: " + response1);
@@ -370,5 +370,5 @@ _boolean_ **deleteObject**(String token, String oid)
 
 The following code shows an example of object removal:
 
-        String oid = "/OGB/000/000/21/00/GPS_id/GEOJSON/bonvoyage/testCID/test/q37871900e8w1r69";
+        String oid = "/OGB/000/000/21/00/GPS_id/GEOJSON/icn2020/testCID/test/q37871900e8w1r69";
         boolean removalStatus = ogbTestClient.deleteObject(token, oid);
