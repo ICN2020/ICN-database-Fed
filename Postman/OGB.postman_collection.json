@@ -1,0 +1,131 @@
+{
+	"variables": [],
+	"info": {
+		"name": "OGB",
+		"_postman_id": "d83d1d36-0718-f961-ba46-8fdb5085bfda",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"url": "https://52.233.130.10:443/OGB/user/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \t\"userName\" : \"admin\",\n \t\"password\" : \"icn2020\",\n \t\"tenantName\" : \"icn2020\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "insert",
+			"request": {
+				"url": "http://52.233.130.10/OGB/content/insert/testCID",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"geometry\": {\n        \"coordinates\": [12.28,41.63],      \n        \"type\": \"Point\"                    \n    },\n    \"type\": \"Feature\",\n    \"properties\": {                        \n        \"train_speed\" : \"10\",\n        \"delay\" : \"0\"\n    }\n}\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "objectQuery",
+			"request": {
+				"url": "http://52.233.130.10/OGB/query-service/element/testCID",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"oid\": \"/repo/repoEU/testCID/icn2020/admin/8734027936/%00%00\"}\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "rangeQuery",
+			"request": {
+				"url": "http://52.233.130.10/OGB/query-service/testCID",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"geometry\": {\n        \"$geoIntersects\": {\n            \"$geometry\": {\n                \"type\": \"Polygon\" , \n                \"coordinates\":[[\n\t                    [12.27,41.62], \n\t                    [12.73,41.62], \n\t                    [12.73,42.02],\n\t                    [12.27,42.02],\n\t                    [12.27,41.62]\n                    ]\n                ]\n            }\n        }\n    }\n}\n\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"url": "http://52.233.130.10/OGB/content/delete",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"oid\": \"/repo/repoEU/testCID/icn2020/admin/1190915236/%00%00\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
