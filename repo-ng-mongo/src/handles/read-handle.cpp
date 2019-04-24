@@ -415,7 +415,7 @@ namespace repo {
       totalQuery++;
       if(result_vector.size() == 0){
         voidQuery++;
-        std::cout << "void percentage: "<< 1.0* voidQuery/totalQuery << " totalQuery: "<<totalQuery<< "voidQuery: "<<voidQuery << std::endl;
+        std::cout << "void percentage: "<< 1.0* voidQuery/totalQuery << " totalQuery: "<<totalQuery<< " voidQuery: "<<voidQuery << std::endl;
       }
       result = boost::algorithm::join(result_vector, ",");
 

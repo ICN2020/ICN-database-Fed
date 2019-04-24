@@ -25,6 +25,7 @@ namespace repo {
     const std::string INDEX_DB_SUFFIX = "_index";
 
     const int threshold = 20000;
+    const int maxTessellationLevel = 2; // possible values are 0, 1, 2
     
     bool index_flag = true;
 
@@ -402,14 +403,13 @@ namespace repo {
 //         std::cout<<"nLeaf="<<nLeaf<<std::endl;
         
         int i,x,y=0;
-        int n=2;    // number of last level index
         bool agg_needed;
         std::string name_key="";
-        std::cout<<"Starting Tassellation"<<nLeaf<<std::endl;
-        std::cout<<"nLeaf="<<nLeaf<<std::endl;
+        std::cout<<"Starting Tassellation"<<std::endl;
+        std::cout<<"current nLeaf="<<nLeaf<<std::endl;
         while (nLeaf > threshold) {
             i=0;
-            while (i<n) {
+            while (i<maxTessellationLevel) {
                 std::cout<<"Analyzing level "<<i<<" nLeaf="<<nLeaf<<std::endl;
                 if(i==0)
                     name_key="name100";
@@ -757,7 +757,6 @@ namespace repo {
     
     void MongoStorage::resetFullTileDB() {
         // level is the lowest level of tessellation
-        int level=0;
         // This function set cancelled false to all the full tile db and set leaf true only on 1x1
         std::cout<<"Starting resetFullTileDB"<<std::endl;
         
@@ -771,7 +770,7 @@ namespace repo {
         bsoncxx::builder::stream::document{} << "$set" << bsoncxx::builder::stream::open_document << "leaf" << false << "cancelled" << false << bsoncxx::builder::stream::close_document << finalize);
         
         //set cancelled=false and leaf=true to level
-        full_tile_conn.update_many(bsoncxx::builder::stream::document{} <<"level"<<level<< finalize,
+        full_tile_conn.update_many(bsoncxx::builder::stream::document{} <<"level"<<maxTessellationLevel<< finalize,
         bsoncxx::builder::stream::document{} << "$set" << bsoncxx::builder::stream::open_document << "leaf" << true << bsoncxx::builder::stream::close_document << finalize);
         
         return;
@@ -846,7 +845,7 @@ namespace repo {
         constrainedTesselation();
         buildIndexDB();
         
-        return;
+        //return;
         while (index_flag == true) {
             
             std::cout << "checkVersion started" << std::endl;
@@ -1184,6 +1183,8 @@ namespace repo {
         std::string name10;
         std::string name1;
         bool need_tesselation = false;
+        auto index_db_conn = conn[INDEX_DB][INDEX_COLLECTION];
+        int initialTiles=index_db_conn.count(bsoncxx::builder::stream::document{} << finalize);
         
         std::list< std::pair<double,double> >::iterator it;
         
@@ -1288,24 +1289,27 @@ namespace repo {
                     } else { //level 2 tile already exists. Just increase counter
 //                         std::cout<<" level 2 tile already exists. Just increase counter"<<std::endl;
                         updateExistingTile(name1, 2, false);
+                        need_tesselation=false;
                         return need_tesselation;
                     }
                 }
                 else { // is a deletion
 //                     std::cout<<"entering in decreaseCounter"<<std::endl;
-                    decreaseCounter(name1, name10, name100, 2);
+                    decreaseCounter(name1, name10, name100, maxTessellationLevel);
                 }
             }
             catch (...) {       
                 std::cout << "SOME ERROR IN shardIndexer! "<< std::endl;
+                need_tesselation=false;
                 return need_tesselation;
             }
         }
         
-        auto index_db_conn = conn[INDEX_DB][INDEX_COLLECTION];
+      
         int nTiles=index_db_conn.count(bsoncxx::builder::stream::document{} << finalize);
-        std::cout << "nTiles=" << nTiles << " limitMax=" << threshold*1.2 << " limitMin=" << threshold*0.8 << std::endl;
-        need_tesselation = nTiles>threshold*1.2 || nTiles<threshold*0.8;
+        std::cout << "initialTiles="<<initialTiles<<" nTiles=" << nTiles << " limitMax=" << threshold*1.2 << " limitMin=" << threshold*0.8 << std::endl;
+        need_tesselation = (nTiles>threshold*1.2 || nTiles<threshold*0.8) && (nTiles!=initialTiles);
+        if (nTiles!=initialTiles && !need_tesselation) versionUpdater(); 
         return need_tesselation;
     }
     
@@ -1329,7 +1333,7 @@ namespace repo {
             document << "name" << name1 << "counter" << 1000;
             insert_one = index_db_conn.insert_one(document.view());
             //update index version
-            versionUpdater();
+            //versionUpdater();
         }       
     }
     
@@ -1395,7 +1399,7 @@ namespace repo {
                     auto index_db_conn = conn[INDEX_DB][INDEX_COLLECTION];
                     mongocxx::stdx::optional<mongocxx::result::delete_result> index_db_delete_result = index_db_conn.delete_one(bsoncxx::builder::stream::document{} << "name" << name << finalize);
                     //update index version
-                    versionUpdater();
+                    //versionUpdater();
                     
                     while (level>0)
                         decreaseCounter(name1, name10, name100, --level);
