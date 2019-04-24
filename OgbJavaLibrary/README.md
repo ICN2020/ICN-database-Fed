@@ -4,7 +4,7 @@ This is a java library developed for OpenGeoBase frontend.
 
 ###Installation guide
 
-To use this library in your project, export OgbJavaLibrary/src/com/icn2020/ogb/clientlib/OgbClientLib.java as runnable jar file and add it to the build path of your project. Then use 
+To use this library in your project, export OgbJavaLibrary/src/com/ogb/clientlib/OgbClientLib.java as runnable jar file and add it to the build path of your project. This jar is already available as OgbLibrary.jar. Then use 
 
         import com.ogb.clientlib.*;
 
