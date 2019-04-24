@@ -46,7 +46,7 @@ public:
   };
 
   explicit
-  MongoStorage(const std::string& dbPath);
+  MongoStorage(const std::string& dbPath, Name dataprefix);
 
   virtual
   ~MongoStorage();
@@ -186,6 +186,7 @@ private:
   std::string m_dbPath;
   int64_t m_size;
   ndn::Face m_face;
+  std::string reponame;
   
 };
 

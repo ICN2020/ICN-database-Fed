@@ -35,7 +35,7 @@ namespace repo {
                 "0123456789+/";
 
 
-    const std::string reponame = "repo";
+    //const std::string reponame = "repoEU";
 
     static inline bool is_base64(unsigned char c) {
         return (isalnum(c) || (c == '+') || (c == '/'));
@@ -781,7 +781,7 @@ namespace repo {
 
     MongoStorage::~MongoStorage(){}
 
-    MongoStorage::MongoStorage(const string& dbPath): m_size(0) {
+    MongoStorage::MongoStorage(const string& dbPath,Name dataprefix): m_size(0) {
         if (dbPath.empty()) {
             std::cerr << "Create db file in local location [" << dbPath << "]. " << std::endl
                         << "You can assign the path using -d option" << std::endl;
@@ -798,6 +798,8 @@ namespace repo {
             m_dbPath = dbPath + "/ndn_repo.db";
         }
         initializeRepo();
+        reponame=dataprefix.get(dataprefix.size()-1).toUri();
+        std::cout<<"Repo Name MongoStorage"<<reponame<<std::endl;
     }
 
     void MongoStorage::initializeRepo() {

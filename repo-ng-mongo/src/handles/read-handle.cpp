@@ -29,8 +29,8 @@ unsigned char *buffer;
 int totalQuery = 0;
 int voidQuery = 0;
 
-const std::string DB_NAME = "ogb_test_repo";
-const std::string reponame = "repo";
+const std::string DB_NAME = "ogb_repo";
+//const std::string reponame = "repoEU";
 
 const char HEX2DEC[256] = 
 {

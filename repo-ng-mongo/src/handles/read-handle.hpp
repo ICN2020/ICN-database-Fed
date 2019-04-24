@@ -52,9 +52,11 @@ class ReadHandle : public BaseHandle
 
 public:
   ReadHandle(Face& face, RepoStorage& storageHandle, KeyChain& keyChain,
-             Scheduler& scheduler)
+             Scheduler& scheduler,Name dataprefix)
     : BaseHandle(face, storageHandle, keyChain, scheduler)
   {
+      reponame=dataprefix.get(dataprefix.size()-1).toUri();
+      std::cout<<"Repo Name Read-Handle "<<reponame<<std::endl;
   }
 
   virtual void
@@ -84,6 +86,8 @@ private:
 
   void 
   readVersion(const Interest& interest);
+  
+   std::string reponame;
 
   
 };
