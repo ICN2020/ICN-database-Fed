@@ -24,7 +24,7 @@ namespace repo {
     const std::string DATA_DB_SUFFIX = "_data";
     const std::string INDEX_DB_SUFFIX = "_index";
 
-    const int threshold = 1000000;
+    const int threshold = 20000;
     
     bool index_flag = true;
 
@@ -1288,6 +1288,7 @@ namespace repo {
                     } else { //level 2 tile already exists. Just increase counter
 //                         std::cout<<" level 2 tile already exists. Just increase counter"<<std::endl;
                         updateExistingTile(name1, 2, false);
+                        return need_tesselation;
                     }
                 }
                 else { // is a deletion
@@ -1302,9 +1303,10 @@ namespace repo {
         }
         
         auto index_db_conn = conn[INDEX_DB][INDEX_COLLECTION];
-        int nTile=index_db_conn.count(bsoncxx::builder::stream::document{} << finalize);
-        std::cout << "nTile=" << nTile << " limitMax=" << threshold*1.2 << " limitMin=" << threshold*0.8 << std::endl;
-        return (nTile>threshold*1.2 || nTile<threshold*0.8);
+        int nTiles=index_db_conn.count(bsoncxx::builder::stream::document{} << finalize);
+        std::cout << "nTiles=" << nTiles << " limitMax=" << threshold*1.2 << " limitMin=" << threshold*0.8 << std::endl;
+        need_tesselation = nTiles>threshold*1.2 || nTiles<threshold*0.8;
+        return need_tesselation;
     }
     
     void MongoStorage::createTileEntry(std::string name1, std::string name10, std::string name100, int level, bool isLeaf) {
