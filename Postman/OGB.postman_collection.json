@@ -121,7 +121,57 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"oid\": \"/repo/repoEU/testCID/icn2020/admin/9625412198/%00%00\"}"
+					"raw": "{\"oid\": \"/repo/repoEU/testCID/icn2020/admin/1245351657/%00%00\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "insertMultipoint",
+			"request": {
+				"url": "http://{{FES}}/OGB/content/insert/{{CID}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"geometry\": {\n        \"coordinates\": [   \n            [12.536976,41.950308],\n            [12.459226,41.937373],\n            [12.363410,41.914593]\n        ],\n        \"type\": \"MultiPoint\"\n    },\n    \"type\": \"Feature\",\n    \"properties\": {\n        \"provider\": \"ICN2020 Project\",\n        \"format\": \"GTFS\",\n        \"URL\" : \"http:/myurl.it/gtfs.zip\"\n    }\n}\n\n"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "insertPolygon",
+			"request": {
+				"url": "http://{{FES}}/OGB/content/insert/{{CID}}",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "Authorization",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"geometry\":{\n        \"type\":\"Polygon\",\n        \"coordinates\":[[\n                    [12.41,41.01],         \n                    [12.51,41.01],       \n                    [12.51,41.11],        \n                    [12.41,41.11],\n                    [12.41,41.01]\n                ]]\n        },\n    \"type\":\"Feature\",\n    \"properties\":{\n        \"name\":\"Italy tile\"\n    }\n}\n\n\n"
 				},
 				"description": ""
 			},
